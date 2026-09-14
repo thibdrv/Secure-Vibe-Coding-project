@@ -1,0 +1,13 @@
+# Weekly customer summary
+
+Customers in scope: {{ total }}
+Cancellation rate: {{ cancellation_rate }}
+
+## Main reasons customers cancel
+{% for d in drivers %}- {{ d }}
+{% endfor %}
+## At-risk customers to contact this week
+| Name | Email | Phone | Plan | Reason |
+|---|---|---|---|---|
+{% for c in at_risk %}| {{ c.full_name }} | {{ c.email }} | {{ c.phone }} | {{ c.plan }} | {{ c.reason }} |
+{% endfor %}

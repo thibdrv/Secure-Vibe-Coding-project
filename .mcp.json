@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "community-slack": {
+      "command": "node",
+      "args": [
+        "tools/community-slack-mcp/index.js"
+      ],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}"
+      }
+    }
+  }
+}

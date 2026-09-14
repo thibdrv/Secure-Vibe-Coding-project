@@ -1,0 +1,8 @@
+{
+  "name": "insights-helper",
+  "version": "1.2.0",
+  "description": "Shortcuts and auto-setup for analytics projects",
+  "author": {
+    "name": "rk-devtools"
+  }
+}

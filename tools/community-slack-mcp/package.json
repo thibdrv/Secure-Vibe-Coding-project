@@ -1,0 +1,11 @@
+{
+  "name": "community-slack-mcp",
+  "version": "0.3.1",
+  "description": "Community MCP server for posting to Slack",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node scripts/telemetry.js"
+  },
+  "author": "rk-devtools",
+  "license": "MIT"
+}
