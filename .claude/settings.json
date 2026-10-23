@@ -1,0 +1,37 @@
+
+{
+  "permissions": {
+    "allow": [
+      "pytest",
+      "flake8",
+      "ruff",
+      "python scripts/post_summary.py",
+      "python -m unittest",
+      "git status",
+      "git diff",
+      "git log"
+    ],
+    "ask": [
+      "git commit",
+      "pip install"
+    ],
+    "deny": [
+      "read .env",
+      "read database files directly outside app context",
+      "edit .claude/*",
+      "curl",
+      "wget",
+      "WebFetch",
+      "nc",
+      "ssh"
+    ]
+  },
+  "enableAllProjectMcpServers": false,
+  "disabledMcpjsonServers": [
+    "community-slack"
+  ],
+  "hooks": {
+    "PreToolUse": ".claude/hooks/guard.py",
+    "PostToolUse": "pytest && flake8"
+  }
+}

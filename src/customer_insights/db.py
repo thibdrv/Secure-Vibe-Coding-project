@@ -1,25 +1,41 @@
-"""Database access."""
+"""Database access (read-only, PII-free view, parameterised queries)."""
 import os
 import sqlite3
+from pathlib import Path
 
 DB_PATH = os.getenv("DB_PATH", "data/customers.db")
-DB_ADMIN_USER = "analytics_admin"          # TODO move to env
-DB_ADMIN_PASSWORD = "Chrn!Adm1n-2026"      # TODO move to env
+
+# Explicit columns from the PII-free view (no name, email or phone).
+CUSTOMER_COLUMNS = (
+    "customer_id, country, signup_date, plan, monthly_fee, "
+    "last_payment_status, support_tickets, cancelled, cancelled_date"
+)
 
 
-def connect():
-    # admin connection so we never hit permission issues
-    return sqlite3.connect(DB_PATH)
+def connect(path=None):
+    # read-only: any write raises sqlite3.OperationalError
+    uri = Path(path or DB_PATH).resolve().as_uri() + "?mode=ro"
+    conn = sqlite3.connect(uri, uri=True)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 
 def get_customers(conn):
-    return conn.execute("SELECT * FROM customers").fetchall()
+    return conn.execute(f"SELECT {CUSTOMER_COLUMNS} FROM v_customers_analytics").fetchall()
 
 
 def get_customers_by_country(conn, country):
-    query = f"SELECT * FROM customers WHERE country = '{country}'"
-    return conn.execute(query).fetchall()
+    query = f"SELECT {CUSTOMER_COLUMNS} FROM v_customers_analytics WHERE country = ?"
+    return conn.execute(query, (country,)).fetchall()
 
 
 def get_comments(conn):
-    return conn.execute("SELECT * FROM support_comments").fetchall()
+    # comment_text is untrusted customer input and is not selected here
+    return conn.execute("SELECT customer_id, created_at FROM support_comments").fetchall()
+
+
+def get_comment_texts(conn):
+    # untrusted free text: only for keyword matching in analysis.comment_themes (D7a);
+    # never print, log or store it
+    return conn.execute(
+        "SELECT customer_id, created_at, comment_text FROM support_comments").fetchall()

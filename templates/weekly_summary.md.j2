@@ -1,13 +1,30 @@
 # Weekly customer summary
 
+As of: {{ as_of }}
+
 Customers in scope: {{ total }}
 Cancellation rate: {{ cancellation_rate }}
 
-## Main reasons customers cancel
+{{ summary }}
+{% if invalid %}
+Records excluded (missing or invalid cancellation flag): {{ invalid }}
+{% endif %}
+{% for t in trend %}- {{ t }}
+{% endfor %}
+## What is associated with cancelling
 {% for d in drivers %}- {{ d }}
 {% endfor %}
-## At-risk customers to contact this week
-| Name | Email | Phone | Plan | Reason |
-|---|---|---|---|---|
-{% for c in at_risk %}| {{ c.full_name }} | {{ c.email }} | {{ c.phone }} | {{ c.plan }} | {{ c.reason }} |
+_These are associations, not proven causes. Payment status and ticket counts are current values, so some may follow from a decision to leave._
+
+## What customers mention in support comments
+{{ themes_intro }}
+{% for t in themes %}- {{ t }}
 {% endfor %}
+## Active customers at risk
+| Risk tier | Active customers | Monthly revenue (EUR) | Past cancellation rate for this tier |
+|---|---|---|---|
+{% for r in at_risk %}| {{ r.tier }} | {{ r.customers }} | {{ r.revenue }} | {{ r.backtest }} |
+{% endfor %}
+_High: failed payment, 6+ support tickets, or late payment with 3+ tickets. Medium: late payment or 3-5 tickets. The customer list stays with the retention owner and is not posted._
+
+_Definition: customers who have cancelled ÷ customers with a valid cancellation flag. This is a snapshot of all customers on record, not a weekly churn rate. Aggregates only; counts from 1 to 4 are shown as "<5" and small groups as "suppressed"._
